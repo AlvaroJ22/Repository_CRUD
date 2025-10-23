@@ -17,7 +17,7 @@ public class MateriasCRUD {
     }
 
     //Method for insert subjects
-    public long nuevaMateria(Materia materia) {
+    public long insertSubjects(Materia materia) {
         SQLiteDatabase baseDeDatos = DBConex.getWritableDatabase();
 
         ContentValues valoresParaInsertar = new ContentValues();
@@ -27,7 +27,7 @@ public class MateriasCRUD {
         return baseDeDatos.insert(NOMBRE_TABLA, null, valoresParaInsertar);
     }
     //Method for obtain subjects
-    public ArrayList<Materia> obtenerMaterias() {
+    public ArrayList<Materia> obtainSubjects() {
         ArrayList<Materia> materias = new ArrayList<>();
 
         SQLiteDatabase baseDeDatos = DBConex.getReadableDatabase();
@@ -60,5 +60,14 @@ public class MateriasCRUD {
 
         cursor.close();
         return materias;
+    }
+
+    //Method for eliminate subjects
+    public int eliminateSubjects(Materia materia) {
+        SQLiteDatabase baseDeDatos = DBConex.getWritableDatabase();
+
+        String[] argumentos = {String.valueOf(materia.getId())};
+
+        return baseDeDatos.delete(NOMBRE_TABLA, "id = ?", argumentos);
     }
 }
