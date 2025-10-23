@@ -62,6 +62,20 @@ public class MateriasCRUD {
         return materias;
     }
 
+    //Method for update subjects
+    public int updateSubjects(Materia materiaEditada) {
+        SQLiteDatabase baseDeDatos = DBConex.getWritableDatabase();
+
+        ContentValues valoresParaActualizar = new ContentValues();
+        valoresParaActualizar.put("materia", materiaEditada.getMateria());
+        valoresParaActualizar.put("creditos", materiaEditada.getCreditos());
+
+        String campoParaActualizar = "id = ?";
+        String[] argumentosParaActualizar = {String.valueOf(materiaEditada.getId())};
+
+        return baseDeDatos.update(NOMBRE_TABLA, valoresParaActualizar, campoParaActualizar, argumentosParaActualizar);
+    }
+
     //Method for eliminate subjects
     public int eliminateSubjects(Materia materia) {
         SQLiteDatabase baseDeDatos = DBConex.getWritableDatabase();
