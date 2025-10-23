@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import java.util.ArrayList;
 
 public class MateriasCRUD {
@@ -17,71 +16,61 @@ public class MateriasCRUD {
     }
 
     //Method for insert subjects
-    public long insertSubjects(Materia materia) {
+    public long insertSubject(Materia materia) {
         SQLiteDatabase baseDeDatos = DBConex.getWritableDatabase();
+        ContentValues valores = new ContentValues();
+        valores.put("materia", materia.getMateria());
+        valores.put("creditos", materia.getCreditos());
 
-        ContentValues valoresParaInsertar = new ContentValues();
-        valoresParaInsertar.put("materia", materia.getMateria());
-        valoresParaInsertar.put("creditos", materia.getCreditos());
-
-        return baseDeDatos.insert(NOMBRE_TABLA, null, valoresParaInsertar);
+        long resultado = baseDeDatos.insert(NOMBRE_TABLA, null, valores);
+        baseDeDatos.close();
+        return resultado;
     }
+
     //Method for obtain subjects
     public ArrayList<Materia> obtainSubjects() {
         ArrayList<Materia> materias = new ArrayList<>();
-
         SQLiteDatabase baseDeDatos = DBConex.getReadableDatabase();
+        String[] columnas = {"materia", "creditos", "id"};
 
-        String[] columnasAConsultar = {"materia", "creditos", "id"};
+        Cursor cursor = baseDeDatos.query(NOMBRE_TABLA, columnas, null, null, null, null, null);
 
-        Cursor cursor = baseDeDatos.query(
-                NOMBRE_TABLA,      // nombre de la tabla
-                columnasAConsultar,
-                null, null, null, null, null
-        );
-
-        if (cursor == null) {
-            return materias;
+        if (cursor.moveToFirst()) {
+            do {
+                String nombreMateria = cursor.getString(0);
+                int creditos = cursor.getInt(1);
+                long id = cursor.getLong(2);
+                materias.add(new Materia(nombreMateria, creditos, id));
+            } while (cursor.moveToNext());
         }
-
-        if (!cursor.moveToFirst()) {
-            cursor.close();
-            return materias;
-        }
-
-        do {
-            String nombreMateria = cursor.getString(0);
-            int creditos = cursor.getInt(1);
-            long id = cursor.getLong(2);
-
-            Materia materiaObtenida = new Materia(nombreMateria, creditos, id);
-            materias.add(materiaObtenida);
-        } while (cursor.moveToNext());
 
         cursor.close();
+        baseDeDatos.close();
         return materias;
     }
 
     //Method for update subjects
-    public int updateSubjects(Materia materiaEditada) {
+    public int updateSubject(Materia materiaEditada) {
         SQLiteDatabase baseDeDatos = DBConex.getWritableDatabase();
+        ContentValues valores = new ContentValues();
+        valores.put("materia", materiaEditada.getMateria());
+        valores.put("creditos", materiaEditada.getCreditos());
 
-        ContentValues valoresParaActualizar = new ContentValues();
-        valoresParaActualizar.put("materia", materiaEditada.getMateria());
-        valoresParaActualizar.put("creditos", materiaEditada.getCreditos());
+        String where = "id = ?";
+        String[] args = {String.valueOf(materiaEditada.getId())};
 
-        String campoParaActualizar = "id = ?";
-        String[] argumentosParaActualizar = {String.valueOf(materiaEditada.getId())};
-
-        return baseDeDatos.update(NOMBRE_TABLA, valoresParaActualizar, campoParaActualizar, argumentosParaActualizar);
+        int filas = baseDeDatos.update(NOMBRE_TABLA, valores, where, args);
+        baseDeDatos.close();
+        return filas;
     }
 
     //Method for eliminate subjects
-    public int eliminateSubjects(Materia materia) {
+    public int deleteSubject(Materia materia) {
         SQLiteDatabase baseDeDatos = DBConex.getWritableDatabase();
+        String[] args = {String.valueOf(materia.getId())};
 
-        String[] argumentos = {String.valueOf(materia.getId())};
-
-        return baseDeDatos.delete(NOMBRE_TABLA, "id = ?", argumentos);
+        int filas = baseDeDatos.delete(NOMBRE_TABLA, "id = ?", args);
+        baseDeDatos.close();
+        return filas;
     }
 }
