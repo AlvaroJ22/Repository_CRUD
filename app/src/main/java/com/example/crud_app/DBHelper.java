@@ -5,21 +5,29 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static final String NOMBRE_BASE_DE_DATOS = "CRUD",
-            NOMBRE_TABLA_MATERIAS = "Tablasss";
-    private static final int VERSION_BASE_DE_DATOS = 1;
+
+    private static final String NOMBRE_BASE_DATOS = "materias.db";
+    private static final int VERSION_BASE_DATOS = 1;
+
+    // Sentencia SQL para crear la tabla "materias"
+    private static final String TABLA_MATERIAS =
+            "CREATE TABLE materias (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "materia TEXT NOT NULL, " +
+                    "creditos INTEGER NOT NULL)";
 
     public DBHelper(Context context) {
-        super(context, NOMBRE_BASE_DE_DATOS, null, VERSION_BASE_DE_DATOS);
+        super(context, NOMBRE_BASE_DATOS, null, VERSION_BASE_DATOS);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(String.format("CREATE TABLE IF NOT EXISTS %s(id int eger primary key autoincrement, materia text, creditos int)", NOMBRE_TABLA_MATERIAS));
+        db.execSQL(TABLA_MATERIAS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS materias");
+        onCreate(db);
     }
 }
